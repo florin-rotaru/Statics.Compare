@@ -17,21 +17,124 @@ namespace Air.Compare
                 m.GetParameters().FirstOrDefault(p => p.Position == 0 && p.ParameterType.IsGenericType && p.ParameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) != null &&
                 m.GetParameters().FirstOrDefault(p => p.Position == 1 && p.ParameterType.IsGenericType && p.ParameterType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) != null);
 
-        static bool ObjectEquals(
+        private static readonly MethodInfo ObjectToString = typeof(object).GetMethod(nameof(object.ToString), new Type[] { });
+
+        private static bool ObjectEquals(
             object left,
             object right,
             bool useConvert)
         {
             if (!useConvert)
-                return object.Equals(left, right);
+                return Equals(left, right);
 
             Type leftType = left.GetType();
 
             if (leftType == right.GetType())
-                return object.Equals(left, right);
+                return Equals(left, right);
 
             object adaptRight = Convert.ChangeType(right, leftType);
-            return object.Equals(left, adaptRight);
+            return Equals(left, adaptRight);
+        }
+
+        private static bool EqualsToEnum(
+            Reflection.MemberInfo leftMember,
+            object leftMemberValue,
+            Reflection.MemberInfo rightMember,
+            object rightMemberValue) =>
+            EqualsToEnum(leftMember.Type, leftMember.IsNumeric, leftMemberValue, rightMember.Type, rightMemberValue);
+
+        private static bool EqualsToEnum(
+            Type leftType,
+            bool leftIsNumeric,
+            object leftValue,
+            Type rightType,
+            object rightValue)
+        {
+            if (leftIsNumeric)
+            {
+                object adaptRightValue = Convert.ChangeType(rightValue, Enum.GetUnderlyingType(rightType));
+
+                if (leftType == Enum.GetUnderlyingType(rightType))
+                    return Equals(leftValue, adaptRightValue);
+
+                return Equals(Convert.ChangeType(leftValue, Enum.GetUnderlyingType(rightType)), adaptRightValue);
+            }
+            else if (leftType == typeof(char))
+            {
+                return Equals(leftValue.ToString(), ObjectToString.Invoke(rightValue, null));
+            }
+            else if (leftType == typeof(string))
+            {
+                return Equals(leftValue, ObjectToString.Invoke(rightValue, null));
+            }
+
+            return false;
+        }
+
+        private static bool EnumEqualsTo(
+            Reflection.MemberInfo leftMember,
+            object leftMemberValue,
+            Reflection.MemberInfo rightMember,
+            object rightMemberValue) =>
+            EnumEqualsTo(leftMember.Type, leftMemberValue, rightMember.Type, rightMember.IsNumeric, rightMemberValue);
+
+        private static bool EnumEqualsTo(
+            Type leftType,
+            object leftValue,
+            Type rightType,
+            bool rightIsNumeric,
+            object rightValue)
+        {
+            if (rightIsNumeric)
+            {
+                object adaptLeftValue = Convert.ChangeType(leftValue, Enum.GetUnderlyingType(leftType));
+
+                if (rightType == Enum.GetUnderlyingType(leftType))
+                    return Equals(adaptLeftValue, rightValue);
+
+                return Equals(Convert.ChangeType(rightValue, Enum.GetUnderlyingType(leftType)), adaptLeftValue);
+            }
+            else if (rightType == typeof(char))
+            {
+                return Equals(rightValue.ToString(), ObjectToString.Invoke(leftValue, null));
+            }
+            else if (rightType == typeof(string))
+            {
+                return Equals(rightValue, ObjectToString.Invoke(leftValue, null));
+            }
+            else if (Reflection.TypeInfo.IsEnum(rightType))
+            {
+                return Equals(ObjectToString.Invoke(rightValue, null), ObjectToString.Invoke(leftValue, null));
+            }
+
+            return false;
+        }
+
+        private static bool BuiltInTypesEquals(
+            Type leftType,
+            object leftValue,
+            Type rightType,
+            object rightValue,
+            bool ignoreDefaultLeftValues,
+            bool ignoreDefaultRightValues,
+            bool useConvert)
+        {
+            if (ignoreDefaultLeftValues && leftValue.Equals(Reflection.TypeInfo.GetDefaultValue(leftType)))
+                return true;
+
+            if (ignoreDefaultRightValues && rightValue.Equals(Reflection.TypeInfo.GetDefaultValue(rightType)))
+                return true;
+
+            if (!useConvert)
+                return Equals(leftValue, rightValue);
+
+            if (Reflection.TypeInfo.IsEnum(leftType))
+                return EnumEqualsTo(leftType, leftValue, rightType, Reflection.TypeInfo.IsNumeric(rightType), rightValue);
+
+            if (Reflection.TypeInfo.IsEnum(rightType))
+                return EqualsToEnum(leftType, Reflection.TypeInfo.IsNumeric(leftType), leftValue, rightType, rightValue);
+
+            return Equals(leftValue, Convert.ChangeType(rightValue, leftType));
         }
 
         private static bool IsCollection(Type type)
@@ -148,26 +251,34 @@ namespace Air.Compare
             bool ignoreDefaultRightValues = false,
             bool useConvert = false)
         {
-            if (left == default && ignoreDefaultLeftValues)
-                return areEqual == true;
-
-            if (right == default && ignoreDefaultRightValues)
-                return areEqual == true;
-
-            if (left == default && right == default)
-                return areEqual == true;
-
-            if (left == default || right == default)
-                return areEqual != true;
-
             Type leftType = typeof(L) != typeof(object) ? typeof(L) : left.GetType();
             Type rightType = typeof(R) != typeof(object) ? typeof(R) : right.GetType();
 
-            if (Reflection.TypeInfo.IsBuiltIn(leftType) && Reflection.TypeInfo.IsBuiltIn(rightType))
-                return ObjectEquals(left, right, useConvert) == areEqual;
-
             if (Reflection.TypeInfo.IsBuiltIn(leftType) != Reflection.TypeInfo.IsBuiltIn(rightType))
                 throw new NotSupportedException();
+
+            if (Reflection.TypeInfo.IsBuiltIn(leftType) && Reflection.TypeInfo.IsBuiltIn(rightType))
+                return BuiltInTypesEquals(
+                    leftType,
+                    left,
+                    rightType,
+                    right,
+                    ignoreDefaultLeftValues,
+                    ignoreDefaultRightValues,
+                    useConvert) == areEqual;
+
+            if (ignoreDefaultLeftValues && left == null)
+                return areEqual == true;
+
+            if (ignoreDefaultRightValues && right == null)
+                return areEqual == true;
+
+            if (left == null && right == null)
+                return areEqual == true;
+
+            if (left == null || right == null)
+                return areEqual != true;
+
 
             if (IsCollection(leftType) &&
                 IsCollection(rightType))
@@ -194,7 +305,7 @@ namespace Air.Compare
                 try { leftMemberValue = leftMember.GetValue(left); }
                 catch { continue; }
 
-                if (ignoreDefaultLeftValues && ObjectEquals(leftMemberValue, leftMember.DefaultValue, useConvert)) continue;
+                if (ignoreDefaultLeftValues && ObjectEquals(leftMemberValue, leftMember.DefaultValue, false)) continue;
 
                 foreach (Reflection.MemberInfo rightMember in rightMembers)
                 {
@@ -205,8 +316,14 @@ namespace Air.Compare
 
                         if (leftMember.IsBuiltIn && rightMember.IsBuiltIn)
                         {
-                            if (ignoreDefaultRightValues && ObjectEquals(rightMemberValue, rightMember.DefaultValue, useConvert)) break;
-                            if (ObjectEquals(leftMemberValue, rightMemberValue, useConvert) != areEqual) return false;
+                            if (ignoreDefaultRightValues && ObjectEquals(rightMemberValue, rightMember.DefaultValue, false)) break;
+
+                            if (leftMember.IsEnum)
+                            { if (EnumEqualsTo(leftMember, leftMemberValue, rightMember, rightMemberValue) != areEqual) return false; }
+                            else if (rightMember.IsEnum)
+                            { if (EqualsToEnum(leftMember, leftMemberValue, rightMember, rightMemberValue) != areEqual) return false; }
+                            else
+                            { if (ObjectEquals(leftMemberValue, rightMemberValue, useConvert) != areEqual) return false; }
 
                             break;
                         }
