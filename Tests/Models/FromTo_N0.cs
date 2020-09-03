@@ -205,8 +205,8 @@ namespace Internal
 
         private void GetMembers(Type sourceType, Type destinationType, out List<MemberInfo> sourceMembers, out List<MemberInfo> destinationMembers)
         {
-            var outSourceMembers = TypeInfo.GetMembers(sourceType, true);
-            var outDestinationMembers = TypeInfo.GetMembers(destinationType, true);
+            var outSourceMembers = TypeInfo.GetMembers(sourceType, true).ToList();
+            var outDestinationMembers = TypeInfo.GetMembers(destinationType, true).ToList();
 
             sourceMembers = outSourceMembers.Where(s => outDestinationMembers.Exists(m => m.Name == s.Name)).OrderBy(o => o.Name).ToList();
             destinationMembers = outDestinationMembers.Where(s => outSourceMembers.Exists(m => m.Name == s.Name)).OrderBy(o => o.Name).ToList();

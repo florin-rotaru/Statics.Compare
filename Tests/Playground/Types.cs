@@ -8,6 +8,7 @@ using static Air.Compare.Members;
 
 namespace Playground
 {
+    [Collection(nameof(Playground))]
     public class Types
     {
         private Fixture Fixture { get; }
@@ -26,117 +27,117 @@ namespace Playground
         private bool IsNullableValueType(Type type) =>
             Nullable.GetUnderlyingType(type) != null;
 
-        private void CompareDefaults<S, D>()
-            where S : new()
-            where D : new()
+        private void CompareDefaults<L, R>()
+            where L : new()
+            where R : new()
         {
-            Type sourceType = typeof(S);
-            Type destinationType = typeof(D);
+            Type leftType = typeof(L);
+            Type rightType = typeof(R);
 
-            S source = default;
-            D destination = default;
+            L left = default;
+            R right = default;
 
-            if (IsNullableValueType(sourceType))
+            if (IsNullableValueType(leftType))
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
-                else if (destinationType.IsValueType)
-                    Assert.False(CompareEquals(source, destination));
+                if (IsNullableValueType(rightType))
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
+                else if (rightType.IsValueType)
+                    Assert.False(CompareEquals(left, right));
                 else
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
             }
-            else if (typeof(S).IsValueType)
+            else if (typeof(L).IsValueType)
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.False(CompareEquals(source, destination));
-                else if (destinationType.IsValueType)
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                if (IsNullableValueType(rightType))
+                    Assert.False(CompareEquals(left, right));
+                else if (rightType.IsValueType)
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
                 else
-                    Assert.False(CompareEquals(source, destination));
+                    Assert.False(CompareEquals(left, right));
             }
             else
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
-                else if (destinationType.IsValueType)
-                    Assert.False(CompareEquals(source, destination));
+                if (IsNullableValueType(rightType))
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
+                else if (rightType.IsValueType)
+                    Assert.False(CompareEquals(left, right));
                 else
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
             }
 
             // =======
-            source = new S();
+            left = new L();
 
-            if (IsNullableValueType(sourceType))
+            if (IsNullableValueType(leftType))
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
-                else if (destinationType.IsValueType)
-                    Assert.False(CompareEquals(source, destination));
+                if (IsNullableValueType(rightType))
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
+                else if (rightType.IsValueType)
+                    Assert.False(CompareEquals(left, right));
                 else
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
             }
-            else if (typeof(S).IsValueType)
+            else if (typeof(L).IsValueType)
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.False(CompareEquals(source, destination));
-                else if (destinationType.IsValueType)
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                if (IsNullableValueType(rightType))
+                    Assert.False(CompareEquals(left, right));
+                else if (rightType.IsValueType)
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
                 else
-                    Assert.False(CompareEquals(source, destination));
+                    Assert.False(CompareEquals(left, right));
             }
             else
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.False(CompareEquals(source, destination));
-                else if (destinationType.IsValueType)
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                if (IsNullableValueType(rightType))
+                    Assert.False(CompareEquals(left, right));
+                else if (rightType.IsValueType)
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
                 else
-                    Assert.False(CompareEquals(source, destination));
+                    Assert.False(CompareEquals(left, right));
             }
 
             // =======
-            source = default;
-            destination = new D();
+            left = default;
+            right = new R();
 
-            if (IsNullableValueType(sourceType))
+            if (IsNullableValueType(leftType))
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
-                else if (destinationType.IsValueType)
-                    Assert.False(CompareEquals(source, destination));
+                if (IsNullableValueType(rightType))
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
+                else if (rightType.IsValueType)
+                    Assert.False(CompareEquals(left, right));
                 else
-                    Assert.False(CompareEquals(source, destination));
+                    Assert.False(CompareEquals(left, right));
             }
-            else if (typeof(S).IsValueType)
+            else if (typeof(L).IsValueType)
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.False(CompareEquals(source, destination));
-                else if (destinationType.IsValueType)
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                if (IsNullableValueType(rightType))
+                    Assert.False(CompareEquals(left, right));
+                else if (rightType.IsValueType)
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
                 else
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
             }
             else
             {
-                if (IsNullableValueType(destinationType))
-                    Assert.True(CompareEquals(source, destination, ignoreDefaultRightValues: true));
-                else if (destinationType.IsValueType)
-                    Assert.False(CompareEquals(source, destination));
+                if (IsNullableValueType(rightType))
+                    Assert.True(CompareEquals(left, right, ignoreDefaultRightValues: true));
+                else if (rightType.IsValueType)
+                    Assert.False(CompareEquals(left, right));
                 else
-                    Assert.False(CompareEquals(source, destination));
+                    Assert.False(CompareEquals(left, right));
             }
         }
 
-        private void CompareEnumerable<S, D>()
+        private void CompareEnumerable<L, R>()
         {
             var entries = Fixture.Create<TC0_I0_Members[]>();
-            var sourceEntries = Mapper<TC0_I0_Members, S>.ToArray(entries);
-            var destinationEntries = Mapper<S, D>.ToArray(sourceEntries);
-            Assert.True(CompareEquals(sourceEntries, destinationEntries));
+            var leftEntries = Mapper<TC0_I0_Members[], L[]>.Map(entries);
+            var rightEntries = Mapper<L[], R[]>.Map(leftEntries);
+            Assert.True(CompareEquals(leftEntries, rightEntries));
 
-            sourceEntries[0] = Mapper<TC0_I0_Members, S>.Map(Fixture.Create<TC0_I0_Members>());
-            Assert.False(CompareEquals(sourceEntries, destinationEntries));
+            leftEntries[0] = Mapper<TC0_I0_Members, L>.Map(Fixture.Create<TC0_I0_Members>());
+            Assert.False(CompareEquals(leftEntries, rightEntries));
         }
 
         [Fact]
@@ -218,6 +219,17 @@ namespace Playground
         [Fact]
         public void FromToEnum()
         {
+            TS0_I1_Nullable_Members left = new TS0_I1_Nullable_Members();
+            TS0_I1_Nullable_Members right = new TS0_I1_Nullable_Members();
+            Assert.True(CompareEquals(left.EnumMember, right.UndefinedEnumMember, useConvert: true));
+
+            left.EnumMember = TABCEnum.B;
+            Assert.False(CompareEquals(left.EnumMember, right.UndefinedEnumMember, useConvert: true));
+
+            left.EnumMember = null;
+            right.UndefinedEnumMember = TUndefinedABCEnum.B;
+            Assert.False(CompareEquals(left.EnumMember, right.UndefinedEnumMember, useConvert: true));
+
             Assert.True(CompareEquals((int)TABCEnum.B, TABCEnum.B, useConvert: true));
             Assert.True(CompareEquals(TABCEnum.B, (int)TABCEnum.B, useConvert: true));
             Assert.True(CompareEquals("B", TABCEnum.B, useConvert: true));

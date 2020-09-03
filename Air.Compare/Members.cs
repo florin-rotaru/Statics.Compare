@@ -19,6 +19,9 @@ namespace Air.Compare
 
         private static readonly MethodInfo ObjectToString = typeof(object).GetMethod(nameof(object.ToString), new Type[] { });
 
+        private static object InvokeObjectToString(object value) =>
+            ObjectToString.Invoke(value, null);
+
         private static bool ObjectEquals(
             object left,
             object right,
@@ -50,6 +53,12 @@ namespace Air.Compare
             Type rightType,
             object rightValue)
         {
+            if (leftValue == rightValue)
+                return true;
+
+            if (leftValue == null || rightValue == null)
+                return false;
+
             if (leftIsNumeric)
             {
                 object adaptRightValue = Convert.ChangeType(rightValue, Enum.GetUnderlyingType(rightType));
@@ -61,11 +70,11 @@ namespace Air.Compare
             }
             else if (leftType == typeof(char))
             {
-                return Equals(leftValue.ToString(), ObjectToString.Invoke(rightValue, null));
+                return Equals(InvokeObjectToString(leftValue), InvokeObjectToString(rightValue));
             }
             else if (leftType == typeof(string))
             {
-                return Equals(leftValue, ObjectToString.Invoke(rightValue, null));
+                return Equals(leftValue, InvokeObjectToString(rightValue));
             }
 
             return false;
@@ -85,6 +94,12 @@ namespace Air.Compare
             bool rightIsNumeric,
             object rightValue)
         {
+            if (leftValue == rightValue)
+                return true;
+
+            if (leftValue == null || rightValue == null)
+                return false;
+
             if (rightIsNumeric)
             {
                 object adaptLeftValue = Convert.ChangeType(leftValue, Enum.GetUnderlyingType(leftType));
@@ -96,15 +111,15 @@ namespace Air.Compare
             }
             else if (rightType == typeof(char))
             {
-                return Equals(rightValue.ToString(), ObjectToString.Invoke(leftValue, null));
+                return Equals(InvokeObjectToString(rightValue), InvokeObjectToString(leftValue));
             }
             else if (rightType == typeof(string))
             {
-                return Equals(rightValue, ObjectToString.Invoke(leftValue, null));
+                return Equals(rightValue, InvokeObjectToString(leftValue));
             }
             else if (Reflection.TypeInfo.IsEnum(rightType))
             {
-                return Equals(ObjectToString.Invoke(rightValue, null), ObjectToString.Invoke(leftValue, null));
+                return Equals(InvokeObjectToString(rightValue), InvokeObjectToString(leftValue));
             }
 
             return false;
@@ -137,37 +152,17 @@ namespace Air.Compare
             return Equals(leftValue, Convert.ChangeType(rightValue, leftType));
         }
 
-        private static bool IsCollection(Type type)
-        {
-            if (type.IsArray)
-                return true;
+        public static bool IsCollection(Type type) =>
+            !Reflection.TypeInfo.IsBuiltIn(type) &&
+            (
+                type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>) ||
+                Reflection.TypeInfo.ImplementsGenericTypeInterface(type, typeof(IEnumerable<>))
+            );
 
-            if (!type.IsGenericType)
-                return false;
-
-            for (int i = 0; i < type.GetInterfaces().Length; i++)
-                if (type.GetInterfaces()[i].IsGenericType &&
-                    type.GetInterfaces()[i].GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                    return true;
-
-            return false;
-        }
-
-        private static Type GetCollectionGenericType(Type collection)
-        {
-            if (collection.IsArray)
-                return collection.GetElementType();
-
-            if (collection.IsInterface &&
-                collection.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                return collection.GenericTypeArguments[0];
-
-            return
-                collection
-                .GetInterfaces()
-                .First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                .GenericTypeArguments[0];
-        }
+        public static Type GetIEnumerableArgument(Type collectionType) =>
+            collectionType.IsGenericType && collectionType.GetGenericTypeDefinition() == typeof(IEnumerable<>) ?
+            collectionType.GenericTypeArguments[0] :
+            Reflection.TypeInfo.GetGenericTypeInterface(collectionType, typeof(IEnumerable<>)).GenericTypeArguments[0];
 
         private static bool CompareCollections<L, R>(
             IEnumerable<L> left,
@@ -223,8 +218,8 @@ namespace Air.Compare
             MethodInfo compareCollections = CompareCollectionsMethodInfo
                 .MakeGenericMethod(new Type[]
                 {
-                    GetCollectionGenericType(leftType),
-                    GetCollectionGenericType(rightType)
+                    GetIEnumerableArgument(leftType),
+                    GetIEnumerableArgument(rightType)
                 });
 
             return (bool)compareCollections
@@ -251,8 +246,20 @@ namespace Air.Compare
             bool ignoreDefaultRightValues = false,
             bool useConvert = false)
         {
-            Type leftType = typeof(L) != typeof(object) ? typeof(L) : left.GetType();
-            Type rightType = typeof(R) != typeof(object) ? typeof(R) : right.GetType();
+            if (ignoreDefaultLeftValues && left == null)
+                return areEqual == true;
+
+            if (ignoreDefaultRightValues && right == null)
+                return areEqual == true;
+
+            if (left == null && right == null)
+                return areEqual == true;
+
+            if (left == null || right == null)
+                return areEqual != true;
+
+            Type leftType = typeof(L) != typeof(object) ? typeof(L) : (left != null ? left.GetType() : typeof(object));
+            Type rightType = typeof(R) != typeof(object) ? typeof(R) : (right != null ? right.GetType() : typeof(object));
 
             if (Reflection.TypeInfo.IsBuiltIn(leftType) != Reflection.TypeInfo.IsBuiltIn(rightType))
                 throw new NotSupportedException();
@@ -266,19 +273,6 @@ namespace Air.Compare
                     ignoreDefaultLeftValues,
                     ignoreDefaultRightValues,
                     useConvert) == areEqual;
-
-            if (ignoreDefaultLeftValues && left == null)
-                return areEqual == true;
-
-            if (ignoreDefaultRightValues && right == null)
-                return areEqual == true;
-
-            if (left == null && right == null)
-                return areEqual == true;
-
-            if (left == null || right == null)
-                return areEqual != true;
-
 
             if (IsCollection(leftType) &&
                 IsCollection(rightType))
@@ -294,8 +288,8 @@ namespace Air.Compare
                     ignoreDefaultRightValues,
                     useConvert);
 
-            List<Reflection.MemberInfo> leftMembers = Reflection.TypeInfo.GetGettableMembers(leftType, true);
-            List<Reflection.MemberInfo> rightMembers = Reflection.TypeInfo.GetGettableMembers(rightType, true);
+            IEnumerable<Reflection.MemberInfo> leftMembers = Reflection.TypeInfo.GetGettableMembers(leftType, true);
+            IEnumerable<Reflection.MemberInfo> rightMembers = Reflection.TypeInfo.GetGettableMembers(rightType, true);
 
             object leftMemberValue = null;
             object rightMemberValue = null;
