@@ -401,7 +401,7 @@ namespace Air.Compare
                         left,
                         rightMemberName,
                         right,
-                        $"value: {left} does not equal {(useConvert ? "nor can be converted" : string.Empty)} to: {right}"));
+                        $"value: {left} does not equal{(useConvert ? " nor can be converted" : string.Empty)} to: {right}"));
 
                 memberDiffs = diffs;
 
@@ -516,7 +516,7 @@ namespace Air.Compare
                                             leftMemberValue,
                                             rightMemberMemberName,
                                             rightMemberValue,
-                                            $"value {leftMemberValue} does not equal {(useConvert ? "nor can be converted" : string.Empty)} to {rightMemberValue}"));
+                                            $"value {leftMemberValue} does not equal{(useConvert ? " nor can be converted" : string.Empty)} to {rightMemberValue}"));
 
                                         valid = false;
                                     }

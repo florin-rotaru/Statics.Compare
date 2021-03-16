@@ -74,13 +74,13 @@ namespace Internal
             return source;
         }
 
-        private bool CanSerialize<D>(S source, D destination)
+        private static bool CanSerialize<D>(S source, D destination)
         {
             return JsonConvert.SerializeObject(source) != null &&
                 JsonConvert.SerializeObject(destination) != null;
         }
 
-        private void AssertEqualsOrDefault<D>(
+        private static void AssertEqualsOrDefault<D>(
             S source,
             D destination,
             bool hasReadonlyMembers) where D : new()
@@ -101,15 +101,15 @@ namespace Internal
             m.GetParameters().Length == 1 &&
             m.GetParameters()[0].ParameterType == typeof(string));
 
-        private static readonly MethodInfo ObjectToString = typeof(object).GetMethod(nameof(object.ToString), new Type[] { });
+        private static readonly MethodInfo ObjectToString = typeof(object).GetMethod(nameof(object.ToString), Array.Empty<Type>());
 
-        private object ConvertTo(Type source, Type destination, object value)
+        private static object ConvertTo(Type source, Type destination, object value)
         {
             var method = GetConvertToMethodInfo(source, destination);
             return method?.Invoke(null, new[] { value });
         }
 
-        private MethodInfo GetConvertToMethodInfo(
+        private static MethodInfo GetConvertToMethodInfo(
             Type nonNullableSourceType,
             Type nonNullableDestinationType)
         {
@@ -147,7 +147,7 @@ namespace Internal
             }
         }
 
-        private Type GetUndelyingType(Type type) =>
+        private static Type GetUndelyingType(Type type) =>
             Nullable.GetUnderlyingType(type) ?? type;
 
         private void CompareConvert<D>(Type sourceType, Type destinationType) where D : new()
@@ -203,7 +203,7 @@ namespace Internal
             }
         }
 
-        private void GetMembers(Type sourceType, Type destinationType, out List<MemberInfo> sourceMembers, out List<MemberInfo> destinationMembers)
+        private static void GetMembers(Type sourceType, Type destinationType, out List<MemberInfo> sourceMembers, out List<MemberInfo> destinationMembers)
         {
             var outSourceMembers = TypeInfo.GetMembers(sourceType, true).ToList();
             var outDestinationMembers = TypeInfo.GetMembers(destinationType, true).ToList();
