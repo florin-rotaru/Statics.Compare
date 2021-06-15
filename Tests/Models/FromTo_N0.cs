@@ -1,4 +1,4 @@
-﻿using Air.Mapper;
+﻿using Statics.Mapper;
 using AutoFixture;
 using AutoFixture.Kernel;
 using Models;
@@ -9,10 +9,10 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
-using static Air.Compare.Members;
-using Emit = Air.Reflection.Emit;
-using MemberInfo = Air.Reflection.MemberInfo;
-using TypeInfo = Air.Reflection.TypeInfo;
+using static Statics.Compare.Members;
+using Emit = Statics.Reflection.Emit;
+using MemberInfo = Statics.Reflection.MemberInfo;
+using TypeInfo = Statics.Reflection.TypeInfo;
 
 namespace Internal
 {
@@ -152,7 +152,7 @@ namespace Internal
 
         private void CompareConvert<D>(Type sourceType, Type destinationType) where D : new()
         {
-            Random random = new Random();
+            Random random = new();
             GetMembers(sourceType, destinationType, out var sourceMembers, out var destinationMembers);
 
             for (int s = 0; s < sourceMembers.Count; s++)

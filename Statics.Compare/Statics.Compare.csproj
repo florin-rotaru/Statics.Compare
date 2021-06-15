@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<PackageId>Air.Compare</PackageId>
+	<PackageId>Statics.Compare</PackageId>
     <TargetFramework>net5.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Florin Rotaru</Authors>
@@ -9,7 +9,7 @@
     <Version>5.0.1</Version>
 	  <PackageLicenseFile>LICENSE</PackageLicenseFile>
 	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-	  <RepositoryUrl>https://github.com/florin-rotaru/Air.Compare</RepositoryUrl>
+	  <RepositoryUrl>https://github.com/florin-rotaru/Statics.Compare</RepositoryUrl>
 	  <PackageTags>compare, compareobjects, compare-objects, comparison, equal, equality, none-equal, deep-equal, deep-equals, diffs, difference</PackageTags>
     <LangVersion>9.0</LangVersion>
 	  <Description>Compares members of two objects and evaluates if they are equal or none equal based on conventions (public properties with the same names and same/derived/convertible types). Provides also few tweak options</Description>
@@ -20,7 +20,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Air.Reflection" Version="5.0.1" />
+    <PackageReference Include="Statics.Reflection" Version="5.0.2" />
   </ItemGroup>
 
 </Project>

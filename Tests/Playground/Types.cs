@@ -1,12 +1,12 @@
-﻿using Air.Compare;
-using Air.Mapper;
+﻿using Statics.Compare;
+using Statics.Mapper;
 using AutoFixture;
 using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
-using static Air.Compare.Members;
+using static Statics.Compare.Members;
 
 namespace Playground
 {

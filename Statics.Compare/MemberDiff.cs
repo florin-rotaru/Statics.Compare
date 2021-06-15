@@ -1,4 +1,4 @@
-﻿namespace Air.Compare
+﻿namespace Statics.Compare
 {
     public class MemberDiff
     {

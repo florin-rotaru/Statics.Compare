@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Air.Compare
+namespace Statics.Compare
 {
     public class Members
     {
@@ -171,7 +171,7 @@ namespace Air.Compare
             bool ignoreDefaultRightValues = false,
             bool useConvert = false)
         {
-            List<MemberDiff> diffs = new List<MemberDiff>();
+            List<MemberDiff> diffs = new();
             memberDiffs = diffs;
             bool valid = true;
 
@@ -317,7 +317,7 @@ namespace Air.Compare
             bool ignoreDefaultRightValues = false,
             bool useConvert = false)
         {
-            List<MemberDiff> diffs = new List<MemberDiff>();
+            List<MemberDiff> diffs = new();
             IEnumerable<MemberDiff> callMethodDiffs;
             memberDiffs = diffs;
             bool valid = true;
