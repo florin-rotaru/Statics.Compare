@@ -1,4 +1,4 @@
-# What is Air.Compare?
+# What is Statics.Compare?
 
 Is a simple open source objects compare library
 
@@ -7,12 +7,12 @@ Compares members of two objects and evaluates if they are equal or none equal ba
 
 You can install it via [package manager console](https://docs.microsoft.com/en-us/nuget/consume-packages/install-use-packages-powershell)
 ```
-PM> Install-Package Air.Compare
+PM> Install-Package Statics.Compare
 ```
 
 ## Basic usage
 ```csharp
-using static Air.Compare.Members;
+using static Statics.Compare.Members;
 
 var equals = CompareEquals(left, right);
 ```
