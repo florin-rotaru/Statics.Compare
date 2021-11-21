@@ -10,41 +10,41 @@ namespace Internal
 
 		#region To C0
 		[Fact]
-		public void To_C0_I0_Members() => ToClass<TC0_I0_Members>(false, false);
+		public void To_C0_I0_Members() => ToClass<TC0_I0_Members>(false);
 		[Fact]
-		public void To_C0_I1_Nullable_Members() => ToClass<TC0_I1_Nullable_Members>(false, false);
+		public void To_C0_I1_Nullable_Members() => ToClass<TC0_I1_Nullable_Members>(false);
 		[Fact]
-		public void To_C0_I2_Literal_Members() => ToClass<TC0_I2_Literal_Members>(true, false);
+		public void To_C0_I2_Literal_Members() => ToClass<TC0_I2_Literal_Members>(true);
 		[Fact]
-		public void To_C0_I3_Readonly_Members() => ToClass<TC0_I3_Readonly_Members>(true, false);
+		public void To_C0_I3_Readonly_Members() => ToClass<TC0_I3_Readonly_Members>(true);
 		[Fact]
-		public void To_C0_I4_Static_Members() => ToClass<TC0_I4_Static_Members>(false, true);
+		public void To_C0_I4_Static_Members() => ToClass<TC0_I4_Static_Members>(false);
 		[Fact]
-		public void To_C0_I5_StaticNullable_Members() => ToClass<TC0_I5_StaticNullable_Members>(false, true);
+		public void To_C0_I5_StaticNullable_Members() => ToClass<TC0_I5_StaticNullable_Members>(false);
 		#endregion
 		#region To S0
 		[Fact]
-		public void To_S0_I0_Members() => ToStruct<TS0_I0_Members>(false, false);
+		public void To_S0_I0_Members() => ToStruct<TS0_I0_Members>(false);
 		[Fact]
-		public void To_S0_I1_Nullable_Members() => ToStruct<TS0_I1_Nullable_Members>(false, false);
+		public void To_S0_I1_Nullable_Members() => ToStruct<TS0_I1_Nullable_Members>(false);
 		[Fact]
-		public void To_S0_I2_Literal_Members() => ToStruct<TS0_I2_Literal_Members>(true, false);
+		public void To_S0_I2_Literal_Members() => ToStruct<TS0_I2_Literal_Members>(true);
 		[Fact]
-		public void To_S0_I3_Static_Members() => ToStruct<TS0_I3_Static_Members>(false, true);
+		public void To_S0_I3_Static_Members() => ToStruct<TS0_I3_Static_Members>(false);
 		[Fact]
-		public void To_S0_I4_StaticNullable_Members() => ToStruct<TS0_I4_StaticNullable_Members>(false, true);
+		public void To_S0_I4_StaticNullable_Members() => ToStruct<TS0_I4_StaticNullable_Members>(false);
 		#endregion
 		#region To NS0
 		[Fact]
-		public void To_NS0_I0_Members() => ToNullableStruct<TS0_I0_Members>(false, false);
+		public void To_NS0_I0_Members() => ToNullableStruct<TS0_I0_Members>(false);
 		[Fact]
-		public void To_NS0_I1_Nullable_Members() => ToNullableStruct<TS0_I1_Nullable_Members>(false, false);
+		public void To_NS0_I1_Nullable_Members() => ToNullableStruct<TS0_I1_Nullable_Members>(false);
 		[Fact]
-		public void To_NS0_I2_Literal_Members() => ToNullableStruct<TS0_I2_Literal_Members>(true, false);
+		public void To_NS0_I2_Literal_Members() => ToNullableStruct<TS0_I2_Literal_Members>(true);
 		[Fact]
-		public void To_NS0_I3_Static_Members() => ToNullableStruct<TS0_I3_Static_Members>(false, true);
+		public void To_NS0_I3_Static_Members() => ToNullableStruct<TS0_I3_Static_Members>(false);
 		[Fact]
-		public void To_NS0_I4_StaticNullable_Members() => ToNullableStruct<TS0_I4_StaticNullable_Members>(false, true);
+		public void To_NS0_I4_StaticNullable_Members() => ToNullableStruct<TS0_I4_StaticNullable_Members>(false);
 		#endregion
 	}
 }

@@ -212,7 +212,27 @@ namespace Internal
             destinationMembers = outDestinationMembers.Where(s => outSourceMembers.Exists(m => m.Name == s.Name)).OrderBy(o => o.Name).ToList();
         }
 
-        public void ToClass<D>(bool hasReadonlyMembers, bool hasStaticMembers) where D : new()
+        public void ToClass<D>(bool hasReadonlyMembers) where D : new()
+        {
+            if (hasReadonlyMembers)
+                return;
+
+            var sourceType = typeof(S);
+            var destinationType = typeof(D);
+
+            var map = Mapper<S, D>.CompileFunc();
+
+            S source = NewSource();
+            D destination = new();
+
+            // =======
+            destination = map(source);
+            AssertEqualsOrDefault(source, destination, hasReadonlyMembers);
+
+            CompareConvert<D>(sourceType, destinationType);
+        }
+
+        public void ToStruct<D>(bool hasReadonlyMembers) where D : struct
         {
             if (hasReadonlyMembers)
                 return;
@@ -232,27 +252,7 @@ namespace Internal
             CompareConvert<D>(sourceType, destinationType);
         }
 
-        public void ToStruct<D>(bool hasReadonlyMembers, bool hasStaticMembers) where D : struct
-        {
-            if (hasReadonlyMembers)
-                return;
-
-            var sourceType = typeof(S);
-            var destinationType = typeof(D);
-
-            var map = Mapper<S, D>.CompileFunc();
-
-            S source = NewSource();
-            D destination = new D();
-
-            // =======
-            destination = map(source);
-            AssertEqualsOrDefault(source, destination, hasReadonlyMembers);
-
-            CompareConvert<D>(sourceType, destinationType);
-        }
-
-        public void ToNullableStruct<D>(bool hasReadonlyMembers, bool hasStaticMembers) where D : struct
+        public void ToNullableStruct<D>(bool hasReadonlyMembers) where D : struct
         {
             if (hasReadonlyMembers)
                 return;
