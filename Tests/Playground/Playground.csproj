@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Statics.Compare\Statics.Compare.csproj" />
+    <ProjectReference Include="..\..\Src\Statics.Compare.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
 

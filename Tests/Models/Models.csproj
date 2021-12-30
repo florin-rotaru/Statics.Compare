@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Statics.Compare\Statics.Compare.csproj" />
+    <ProjectReference Include="..\..\Src\Statics.Compare.csproj" />
   </ItemGroup>
 
 </Project>
