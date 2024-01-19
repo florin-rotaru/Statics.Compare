@@ -2,11 +2,11 @@
 
   <PropertyGroup>
 	<PackageId>Statics.Compare</PackageId>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Florin Rotaru</Authors>
     <Company />
-    <Version>6.0.0</Version>
+    <Version>8.0.0</Version>
 	<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	<RepositoryUrl>https://github.com/florin-rotaru/Statics.Compare</RepositoryUrl>
@@ -20,7 +20,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Statics.Reflection" Version="6.0.0" />
+    <PackageReference Include="Statics.Reflection" Version="8.0.0" />
   </ItemGroup>
 
 </Project>
